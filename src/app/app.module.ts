@@ -1,7 +1,15 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, Injector } from '@angular/core';
+import {
+  OvermindModule,
+  OvermindService,
+  OVERMIND_INSTANCE
+} from "overmind-angular";
+import { createOvermind } from "overmind";
+import { config, Store } from "./overmind";
 
 import { AppComponent } from './app.component';
+import { setServiceInjector } from './util/ServiceInjector';
 
 @NgModule({
   declarations: [
@@ -10,7 +18,15 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule
   ],
-  providers: [],
+  providers: [
+    { provide: OVERMIND_INSTANCE, useValue: createOvermind(config) },
+    { provide: Store, useExisting: OvermindService }
+  ],
+
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(private injector: Injector) {
+    setServiceInjector(injector);
+  }
+}
